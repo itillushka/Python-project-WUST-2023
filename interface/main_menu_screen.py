@@ -1,3 +1,5 @@
+from kivy.app import App
+from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
@@ -8,13 +10,40 @@ from kivy.graphics import Color, RoundedRectangle, Rectangle
 from kivy.metrics import dp
 from kivy.utils import get_color_from_hex
 from kivy.core.text import LabelBase
-from kivy.uix.behaviors import ButtonBehavior
+
 
 # Custom fonts
 font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
 LabelBase.register(name='AristaSans', fn_regular=font_path)
 font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/Antichona-VGlAy.ttf'
 LabelBase.register(name='Antichona', fn_regular=font_path)
+
+
+class ExitButton(ButtonBehavior, Image):
+    def __init__(self, **kwargs):
+        super(ExitButton, self).__init__(**kwargs)
+        self.normal_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit.png'
+        self.highlighted_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit_highlighted.png'
+        self.source = self.normal_source
+        self.size_hint = (None, None)
+        self.size = (50, 50)
+        self.pos_hint = {'right': 0.99, 'top': 0.99}
+        self.keep_ratio = True
+        self.allow_stretch = True
+        self.bind(on_release=self.exit_app)
+
+        Window.bind(mouse_pos=self.on_mouse_pos)
+
+    def on_mouse_pos(self, *args):
+        pos = args[1]
+        inside = self.collide_point(*self.to_widget(*pos))
+        if inside:
+            self.source = self.highlighted_source
+        else:
+            self.source = self.normal_source
+
+    def exit_app(self, instance):
+        App.get_running_app().stop()
 
 
 class MainMenuScreen(Screen):
@@ -28,7 +57,7 @@ class MainMenuScreen(Screen):
         self.add_widget(self.layout)
 
         # Load the background image
-        bg_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_background_main.png'
+        bg_path = 'interface/resources/spotamix_background_main.png'
         self.bg_texture = Image(source=bg_path).texture
 
         # Draw the background
@@ -51,6 +80,10 @@ class MainMenuScreen(Screen):
         self.spotamix_label.height = self.logo.height
         self.spotamix_label.pos_hint = {'center_x': 0.5, 'y': 0.3}
         self.layout.add_widget(self.spotamix_label)
+
+        # Add Exit Button
+        exit_button = ExitButton()
+        self.layout.add_widget(exit_button)
 
         # Define paths for normal and hover background images
         self.normal_bg = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png'

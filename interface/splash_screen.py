@@ -5,6 +5,7 @@ from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 
+
 class SplashScreen(Screen):
     def __init__(self, **kwargs):
         super(SplashScreen, self).__init__(**kwargs)

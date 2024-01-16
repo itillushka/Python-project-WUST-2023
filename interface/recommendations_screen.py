@@ -22,10 +22,12 @@ kv_song_list = '''
     padding: dp(10)
     spacing: dp(10)
 
-    Image:
+    PlayButton:
+        id: play_button_image
         source: root.play_button
         size_hint_x: None
         width: self.height
+        on_press: root.on_play_button_press()
     Label:
         text: root.title
         font_name: 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
@@ -63,11 +65,29 @@ Builder.load_string(kv_song_list)
 
 
 # Define the SongItem class
-class SongItem(BoxLayout):
+class SongItem(ButtonBehavior, BoxLayout):
     title = StringProperty('')
     artist = StringProperty('')
     duration = StringProperty('')
-    play_button = StringProperty('')
+    play_button = StringProperty('C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_play_button.png')
+
+    def on_play_button_press(self):
+        print("The song is being played")
+
+
+class PlayButton(ButtonBehavior, Image):
+    def __init__(self, **kwargs):
+        super(PlayButton, self).__init__(**kwargs)
+        Window.bind(mouse_pos=self.on_mouse_pos)
+
+    def on_mouse_pos(self, *args):
+        pos = args[1]
+        inside = self.collide_point(*self.to_widget(*pos))
+        if inside:
+            self.source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_play_button_highlighted.png'
+        else:
+            self.source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_play_button.png'
+
 
 
 class SongsRecycleView(RecycleView):
@@ -85,7 +105,7 @@ class SongsRecycleView(RecycleView):
 
         # Adjust the size and position of the RecycleView
         self.size_hint = (0.8, 0.6)
-        self.pos_hint = {'center_x': 0.5, 'center_y': 0.4}
+        self.pos_hint = {'center_x': 0.5, 'center_y': 0.35}
         pass
 
 
@@ -95,7 +115,7 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
         super(PlaylistButton, self).__init__(**kwargs)
         self.size_hint = (None, None)
         self.size = (Window.width * 0.8, 60)  # Adjust the size as needed
-        self.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
+        self.pos_hint = {'center_x': 0.5, 'center_y': 0.40}
 
         # Image as the background
         self.background_image = Image(
@@ -103,7 +123,7 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
             allow_stretch=True,
             keep_ratio=True,
             size_hint=(1, 1),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+            pos_hint={'center_x': 0.5, 'center_y': 0.40}
         )
 
         self.default_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png'
@@ -122,7 +142,7 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
             size_hint=(None, None),
             size=self.size,
             color=(1, 1, 1, 1),
-            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+            pos_hint={'center_x': 0.5, 'center_y': 0.40}
             )
 
         # Adding the label to the FloatLayout
@@ -160,6 +180,71 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
         print("Navigate to the spotify playlist.")
 
 
+class BackButton(ButtonBehavior, Image):
+    def __init__(self, **kwargs):
+        super(BackButton, self).__init__(**kwargs)
+        self.normal_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_go_back_button.png'
+        self.highlighted_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_go_back_button_highlighted.png'
+        self.source = self.normal_source
+        self.size_hint = (None, None)
+        self.size = (50, 50)
+        self.pos_hint = {'x': 0.01, 'top': 0.99}
+        self.keep_ratio = True
+        self.allow_stretch = True
+
+        # Bind the on_release event to the go_to_main_menu method
+        self.bind(on_release=self.go_to_main_menu)
+
+        # Bind mouse position to change button appearance on hover
+        Window.bind(mouse_pos=self.on_mouse_pos)
+
+    def on_mouse_pos(self, *args):
+        # Change the source of the button when mouse hovers over it
+        pos = args[1]
+        inside = self.collide_point(*self.to_widget(*pos))
+        if inside:
+            self.source = self.highlighted_source
+        else:
+            self.source = self.normal_source
+
+    def go_to_main_menu(self, instance):
+        # Get the current screen (which is a direct child of ScreenManager)
+        current_screen = self.parent
+        while current_screen and not isinstance(current_screen, Screen):
+            current_screen = current_screen.parent
+
+        # Now we can check if we have a Screen and its manager exists
+        if current_screen and hasattr(current_screen, 'manager'):
+            current_screen.manager.current = 'main_menu'
+
+
+class ExitButton(ButtonBehavior, Image):
+    def __init__(self, **kwargs):
+        super(ExitButton, self).__init__(**kwargs)
+        self.normal_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit.png'
+        self.highlighted_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit_highlighted.png'
+        self.source = self.normal_source
+        self.size_hint = (None, None)
+        self.size = (50, 50)
+        self.pos_hint = {'right': 0.99, 'top': 0.99}
+        self.keep_ratio = True
+        self.allow_stretch = True
+        self.bind(on_release=self.exit_app)
+
+        Window.bind(mouse_pos=self.on_mouse_pos)
+
+    def on_mouse_pos(self, *args):
+        pos = args[1]
+        inside = self.collide_point(*self.to_widget(*pos))
+        if inside:
+            self.source = self.highlighted_source
+        else:
+            self.source = self.normal_source
+
+    def exit_app(self, instance):
+        App.get_running_app().stop()
+
+
 class RecommendationsScreen(Screen):
     def __init__(self, **kwargs):
         super(RecommendationsScreen, self).__init__(**kwargs)
@@ -179,13 +264,22 @@ class RecommendationsScreen(Screen):
         )
 
         # Add images to the main layout
+        main_layout.add_widget(Widget(size_hint_y=None, height=5))  # Spacer
         main_layout.add_widget(logo_image)
-        main_layout.add_widget(Widget(size_hint_y=None, height=10))  # Spacer
+        main_layout.add_widget(Widget(size_hint_y=None, height=15))  # Spacer
         main_layout.add_widget(name_image)
         main_layout.add_widget(Widget(size_hint_y=None, height=20))  # Spacer
 
+        # Add Back Button
+        back_button = BackButton()
+        self.add_widget(back_button)
+
+        # Add Exit Button
+        exit_button = ExitButton()
+        self.add_widget(exit_button)
+
         # SongsRecycleView
-        songs_view = SongsRecycleView(size_hint=(0.8, 0.6), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        songs_view = SongsRecycleView(size_hint=(0.8, 0.6), pos_hint={'center_x': 0.5, 'center_y': 0.4})
         main_layout.add_widget(songs_view)
 
         # Spacer between recycle view and the button
@@ -193,7 +287,7 @@ class RecommendationsScreen(Screen):
 
         # Playlist button
         playlist_button = PlaylistButton(size_hint=(None, None), size=(Window.width * 0.8, 60),
-                                         pos_hint={'center_x': 0.5, 'center_y': 0.5})
+                                         pos_hint={'center_x': 0.5, 'center_y': 0.4})
         main_layout.add_widget(playlist_button)
 
         # Spacer between the button and the bottom of the screen
