@@ -1,0 +1,18 @@
+<SongItem>:
+    orientation: 'horizontal'
+    size_hint_y: None
+    height: dp(50)
+
+    Image:
+        source: root.play_button
+        size_hint_x: None
+        width: self.height
+
+    Label:
+        text: root.title
+
+    Label:
+        text: root.artist
+
+    Label:
+        text: root.duration
