@@ -9,7 +9,7 @@ from kivy.core.window import Window
 from splash_screen import SplashScreen
 from main_menu_screen import MainMenuScreen
 from home_screen import HomeScreen
-from recommendations_screen import MainLayout
+from recommendations_screen import RecommendationsScreen
 
 
 # Set the configuration before any other Kivy components are imported
@@ -38,9 +38,10 @@ class MyApp(App):
         home_screen = HomeScreen(name='home')
         self.screen_manager.add_widget(home_screen)
 
-        # # Then add the recommendations screen
-        # recommendations_screen = MainLayout(name='recommendations')
-        # self.screen_manager.add_widget(recommendations_screen)
+        # Add the recommendations screen
+        recommendations_screen = RecommendationsScreen()
+        recommendations_screen.name = 'recommendations'  # Set the name property here
+        self.screen_manager.add_widget(recommendations_screen)
 
         # Optionally, set the 'splash' screen as the current screen to show first
         self.screen_manager.current = 'splash'

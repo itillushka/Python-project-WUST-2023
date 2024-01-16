@@ -2,7 +2,6 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.image import Image
 from kivy.uix.label import Label
@@ -12,6 +11,8 @@ from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
 from kivy.graphics import Color, RoundedRectangle
 from kivy.uix.widget import Widget
+from kivy.uix.screenmanager import Screen
+
 
 # Define the .kv design
 kv_song_list = '''
@@ -128,9 +129,9 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
         print("Navigate to the playlist screen.")
 
 
-class MainLayout(BoxLayout):
+class RecommendationsScreen(BoxLayout):
     def __init__(self, **kwargs):
-        super(MainLayout, self).__init__(**kwargs)
+        super(RecommendationsScreen, self).__init__(**kwargs)
         self.orientation = 'vertical'
         self.padding = [0, 10, 0, 10]
 
@@ -180,7 +181,7 @@ class MainLayout(BoxLayout):
 
 class MyApp(App):
     def build(self):
-        return MainLayout()
+        return RecommendationsScreen()
 
 
 if __name__ == '__main__':

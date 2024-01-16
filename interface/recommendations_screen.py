@@ -2,7 +2,6 @@ from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
-from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.image import Image
 from kivy.uix.label import Label
@@ -12,6 +11,7 @@ from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle
 from kivy.graphics import Color, RoundedRectangle
 from kivy.uix.widget import Widget
+from kivy.uix.screenmanager import Screen
 
 # Define the .kv design
 kv_song_list = '''
@@ -102,9 +102,15 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
             source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png',
             allow_stretch=True,
             keep_ratio=True,
-            size_hint=(1.3, 1.3),
-            pos_hint={'center_x': 0.5, 'center_y': 0.35}
+            size_hint=(1, 1),
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}
         )
+
+        self.default_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png'
+        self.highlight_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background_highlighted.png'
+
+        # Add the background image as a widget to the button
+        self.add_widget(self.background_image)
 
         # Full path to the font file
         font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
@@ -116,72 +122,82 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
             size_hint=(None, None),
             size=self.size,
             color=(1, 1, 1, 1),
-            pos_hint={'center_x': 0.5, 'center_y': 0.35}
-        )
+            pos_hint={'center_x': 0.5, 'center_y': 0.5}
+            )
 
-        # Adding the background image and label to the FloatLayout
-        self.add_widget(self.background_image)
+        # Adding the label to the FloatLayout
         self.add_widget(self.label)
+
+        # Bind on_enter and on_leave events
+        self.bind(on_enter=self.on_enter, on_leave=self.on_leave)
+
+        # Register for mouse enter/leave events
+        Window.bind(mouse_pos=self.on_mouse_pos)
+
+    def on_mouse_pos(self, *args):
+        # Check if mouse is over the button
+        pos = args[1]
+        inside = self.collide_point(*self.to_widget(*pos))
+        if inside:
+            if not hasattr(self, 'hovered'):
+                self.hovered = True
+                self.on_enter()
+        else:
+            if hasattr(self, 'hovered'):
+                del self.hovered
+                self.on_leave()
+
+    def on_enter(self):
+        # Change the background image to the highlighted version
+        self.background_image.source = self.highlight_source
+
+    def on_leave(self):
+        # Change the background image back to the default
+        self.background_image.source = self.default_source
 
     def on_press(self):
         # Add action for when the button is pressed
-        print("Navigate to the playlist screen.")
+        print("Navigate to the spotify playlist.")
 
 
-class MainLayout(BoxLayout):
+class RecommendationsScreen(Screen):
     def __init__(self, **kwargs):
-        super(MainLayout, self).__init__(**kwargs)
-        self.orientation = 'vertical'
-        self.padding = [0, 10, 0, 10]
+        super(RecommendationsScreen, self).__init__(**kwargs)
+        # Create a BoxLayout as the main container for the screen
+        main_layout = BoxLayout(orientation='vertical', padding=[0, 10, 0, 10])
 
         # Images
         logo_image = Image(
-            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png')
+            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png',
+            size_hint_y=None,
+            height=Window.height * 0.1
+        )
         name_image = Image(
-            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png')
-
-        # Adjust the size_hint_y to allocate space appropriately
-        logo_image.size_hint_y = None
-        name_image.size_hint_y = None
-        logo_image.height = Window.height * 0.1
-        name_image.height = Window.height * 0.03
+            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png',
+            size_hint_y=None,
+            height=Window.height * 0.03
+        )
 
         # Add images to the main layout
-        self.add_widget(logo_image)
-
-        # Spacer between logo and name images
-        spacer1 = Widget(size_hint_y=None, height=10)
-        self.add_widget(spacer1)
-
-        self.add_widget(name_image)
-
-        # Spacer between name image and recycle view
-        spacer2 = Widget(size_hint_y=None, height=20)
-        self.add_widget(spacer2)
+        main_layout.add_widget(logo_image)
+        main_layout.add_widget(Widget(size_hint_y=None, height=10))  # Spacer
+        main_layout.add_widget(name_image)
+        main_layout.add_widget(Widget(size_hint_y=None, height=20))  # Spacer
 
         # SongsRecycleView
-        songs_view = SongsRecycleView()
-        songs_view.size_hint = (0.8, 0.6)
-        songs_view.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
-        self.add_widget(songs_view)
+        songs_view = SongsRecycleView(size_hint=(0.8, 0.6), pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        main_layout.add_widget(songs_view)
 
         # Spacer between recycle view and the button
-        button_spacer = Widget(size_hint_y=None, height=50)
-        self.add_widget(button_spacer)
+        main_layout.add_widget(Widget(size_hint_y=None, height=50))
 
         # Playlist button
-        playlist_button = PlaylistButton()
-        self.add_widget(playlist_button)
+        playlist_button = PlaylistButton(size_hint=(None, None), size=(Window.width * 0.8, 60),
+                                         pos_hint={'center_x': 0.5, 'center_y': 0.5})
+        main_layout.add_widget(playlist_button)
 
         # Spacer between the button and the bottom of the screen
-        bottom_spacer_final = Widget(size_hint_y=None)
-        self.add_widget(bottom_spacer_final)
+        main_layout.add_widget(Widget(size_hint_y=None, height=50))
 
-
-class MyApp(App):
-    def build(self):
-        return MainLayout()
-
-
-if __name__ == '__main__':
-    MyApp().run()
+        # Add the main layout to the screen
+        self.add_widget(main_layout)
