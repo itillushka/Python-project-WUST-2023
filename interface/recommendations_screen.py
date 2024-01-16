@@ -1,19 +1,24 @@
-from kivy.core.window import Window
-from kivy.graphics import Rectangle
-from kivy.uix.image import Image
-from kivy.metrics import dp
+from kivy.app import App
+from kivy.lang import Builder
+from kivy.uix.behaviors import ButtonBehavior
 from kivy.uix.boxlayout import BoxLayout
 from kivy.uix.button import Button
 from kivy.uix.floatlayout import FloatLayout
+from kivy.uix.image import Image
+from kivy.uix.label import Label
 from kivy.uix.recycleview import RecycleView
-from kivy.properties import ListProperty, StringProperty
-from kivy.uix.screenmanager import Screen
-from kivy.utils import get_color_from_hex
-from kivy.lang import Builder
+from kivy.properties import StringProperty
+from kivy.core.window import Window
+from kivy.graphics import Color, Rectangle
+from kivy.graphics import Color, RoundedRectangle
+from kivy.uix.widget import Widget
 
-Builder.load_string('''
+# Define the .kv design
+kv_song_list = '''
 <SongItem>:
     orientation: 'horizontal'
+    size_hint_y: None
+    height: dp(50)
     padding: dp(10)
     spacing: dp(10)
 
@@ -23,15 +28,19 @@ Builder.load_string('''
         width: self.height
     Label:
         text: root.title
+        font_name: 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
+        color: (0.4,0.89, 0.55, 1) if root.title else (1, 1, 1, 1)
         size_hint_x: 0.5
     Label:
         text: root.artist
+        font_name: 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
         size_hint_x: 0.3
     Label:
         text: root.duration
+        font_name: 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
         size_hint_x: 0.2
 
-<SimpleRecycleView>:
+<SongsRecycleView>:
     viewclass: 'SongItem'
     RecycleBoxLayout:
         default_size: None, dp(56)
@@ -39,107 +48,140 @@ Builder.load_string('''
         size_hint_y: None
         height: self.minimum_height
         orientation: 'vertical'
-''')
+        padding: dp(10)
+        spacing: dp(10)
+        canvas.before:
+            Color:
+                rgba: (0.24, 0.24, 0.24, 0.5) # Semi-transparent dark grey
+            RoundedRectangle:
+                size: self.size
+                pos: self.pos
+                radius: [40]  # Rounded corners with radius of 10 pixels
+    '''
 
-class RecommendationsScreen(Screen):
-    data_items = ListProperty([])
+Builder.load_string(kv_song_list)
 
-    def __init__(self, **kwargs):
-        super(RecommendationsScreen, self).__init__(**kwargs)
-        self.layout = FloatLayout(size=(Window.width, Window.height))
-        self.add_widget(self.layout)
 
-        # Set the background image
-        with self.canvas.before:
-            bg_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_background_main.png'
-            self.bg = Rectangle(source=bg_path, size=(Window.width, Window.height))
-
-        # Load and place the smaller logo
-        logo_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png'
-        self.logo = Image(source=logo_path, allow_stretch=True)
-        self.logo.size_hint = None, None
-        self.logo.size = (dp(100), dp(100))  # Adjust size as needed
-        self.logo.pos_hint = {'center_x': 0.5, 'top': 0.95}
-        self.layout.add_widget(self.logo)
-
-        # Load and place the smaller Spotamix image
-        spotamix_label_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png'
-        self.spotamix_label = Image(source=spotamix_label_path, allow_stretch=True)
-        self.spotamix_label.size_hint = None, None
-        self.spotamix_label.size = (dp(200), dp(50))  # Adjust size as needed
-        self.spotamix_label.pos_hint = {'center_x': 0.5, 'top': 0.85}
-        self.layout.add_widget(self.spotamix_label)
-
-        # # Initialize the list of song data
-        # self.data_items = self.get_songs_data()
-        #
-        # # Create the RecycleView
-        # self.songs_list = RecycleView()
-        # self.songs_list.size_hint = (None, None)
-        # self.songs_list.size = (Window.width * 0.8, Window.height * 0.5)  # Make it smaller
-        # self.songs_list.pos_hint = {'center_x': 0.5, 'center_y': 0.4}  # Adjust position under logo
-        #
-        # # Define the viewclass used by the RecycleView
-        # self.songs_list.viewclass = 'SongItem'
-        #
-        # # Assign the data to the RecycleView
-        # self.songs_list.data = [{'title': song['title'],
-        #                          'artist': song['artist'],
-        #                          'duration': song['duration'],
-        #                          'play_button': song['play_button']}
-        #                         for song in self.data_items]
-        #
-        # # Add the RecycleView to the layout
-        # self.layout.add_widget(self.songs_list)
-
-        # Add a 'Back' button to return to the home screen
-        self.back_button = Button(
-            text='Back',
-            size_hint=(None, None),
-            size=(dp(100), dp(50)),
-            pos_hint={'x': 0, 'top': 1},
-            background_normal='',
-            background_color=get_color_from_hex('055065'),  # Midnight Green
-            color=get_color_from_hex('FFFFFF')  # White text color
-        )
-        self.back_button.bind(on_release=self.go_back)
-        self.layout.add_widget(self.back_button)
-
-        # Bind to mouse position changes for hover effect
-        Window.bind(mouse_pos=self.on_mouse_pos)
-
-        # ... [Set up buttons and other UI elements] ...
-
-    def create_styled_button(self, text):
-        # Create a button with the desired style
-        button = Button(text=text, font_name='AristaSans', font_size='25sp', size_hint=(None, None), height=dp(110))
-        # ... [style the button, set background, etc.] ...
-        return button
-
-    def on_mouse_pos(self, *args):
-        # Change button color on hover
-        pos = args[1]
-        if self.back_button.collide_point(*self.to_widget(*pos)):
-            self.back_button.background_color = get_color_from_hex('13A95F')  # Pigment Green
-            self.back_button.color = get_color_from_hex('67E26D')  # Malachite
-        else:
-            self.back_button.background_color = get_color_from_hex('055065')  # Midnight Green
-            self.back_button.color = get_color_from_hex('FFFFFF')  # White
-
-    def go_back(self, instance):
-        # Logic to go back to the previous screen
-        self.manager.transition.direction = 'right'
-        self.manager.current = 'home'  # Or whatever the name of your home screen is
-
-# ... [Rest of your code, including methods to handle button presses and transitions] ...
 # Define the SongItem class
 class SongItem(BoxLayout):
     title = StringProperty('')
     artist = StringProperty('')
     duration = StringProperty('')
-    play_button = StringProperty('play_image.png')  # Update the path to your play image
+    play_button = StringProperty('')
 
-class SimpleRecycleView(RecycleView):
+
+class SongsRecycleView(RecycleView):
     def __init__(self, **kwargs):
-        super(SimpleRecycleView, self).__init__(**kwargs)
-        self.data = [{'title': f'Song {i}', 'artist': f'Artist {i}', 'duration': '3:00', 'play_button': 'play_image.png'} for i in range(20)]
+        super(SongsRecycleView, self).__init__(**kwargs)
+        self.data = [{'title': f'Song {i}', 'artist': f'Artist {i}', 'duration': '3:00',
+                      'play_button': 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_play_button.png'}
+                     for i in range(50)]
+        # Set the background for the entire window
+        with Window.canvas.before:
+            Color(rgba=(1, 1, 1, 1))  # White color
+            self.bg = Rectangle(
+                source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_background_main.png',
+                size=(Window.width, Window.height))
+
+        # Adjust the size and position of the RecycleView
+        self.size_hint = (0.8, 0.6)
+        self.pos_hint = {'center_x': 0.5, 'center_y': 0.4}
+        pass
+
+
+# Define the custom button class
+class PlaylistButton(ButtonBehavior, FloatLayout):
+    def __init__(self, **kwargs):
+        super(PlaylistButton, self).__init__(**kwargs)
+        self.size_hint = (None, None)
+        self.size = (Window.width * 0.8, 60)  # Adjust the size as needed
+        self.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
+
+        # Image as the background
+        self.background_image = Image(
+            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png',
+            allow_stretch=True,
+            keep_ratio=True,
+            size_hint=(1.3, 1.3),
+            pos_hint={'center_x': 0.5, 'center_y': 0.35}
+        )
+
+        # Full path to the font file
+        font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
+
+        # Label for the text
+        self.label = Label(
+            text='Go to your playlist',
+            font_name=font_path,
+            size_hint=(None, None),
+            size=self.size,
+            color=(1, 1, 1, 1),
+            pos_hint={'center_x': 0.5, 'center_y': 0.35}
+        )
+
+        # Adding the background image and label to the FloatLayout
+        self.add_widget(self.background_image)
+        self.add_widget(self.label)
+
+    def on_press(self):
+        # Add action for when the button is pressed
+        print("Navigate to the playlist screen.")
+
+
+class MainLayout(BoxLayout):
+    def __init__(self, **kwargs):
+        super(MainLayout, self).__init__(**kwargs)
+        self.orientation = 'vertical'
+        self.padding = [0, 10, 0, 10]
+
+        # Images
+        logo_image = Image(
+            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png')
+        name_image = Image(
+            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png')
+
+        # Adjust the size_hint_y to allocate space appropriately
+        logo_image.size_hint_y = None
+        name_image.size_hint_y = None
+        logo_image.height = Window.height * 0.1
+        name_image.height = Window.height * 0.03
+
+        # Add images to the main layout
+        self.add_widget(logo_image)
+
+        # Spacer between logo and name images
+        spacer1 = Widget(size_hint_y=None, height=10)
+        self.add_widget(spacer1)
+
+        self.add_widget(name_image)
+
+        # Spacer between name image and recycle view
+        spacer2 = Widget(size_hint_y=None, height=20)
+        self.add_widget(spacer2)
+
+        # SongsRecycleView
+        songs_view = SongsRecycleView()
+        songs_view.size_hint = (0.8, 0.6)
+        songs_view.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
+        self.add_widget(songs_view)
+
+        # Spacer between recycle view and the button
+        button_spacer = Widget(size_hint_y=None, height=50)
+        self.add_widget(button_spacer)
+
+        # Playlist button
+        playlist_button = PlaylistButton()
+        self.add_widget(playlist_button)
+
+        # Spacer between the button and the bottom of the screen
+        bottom_spacer_final = Widget(size_hint_y=None)
+        self.add_widget(bottom_spacer_final)
+
+
+class MyApp(App):
+    def build(self):
+        return MainLayout()
+
+
+if __name__ == '__main__':
+    MyApp().run()
