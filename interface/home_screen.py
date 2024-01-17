@@ -20,6 +20,17 @@ darker_color = get_color_from_hex('#303030')  # Darker shade for inactive input
 
 dark_grey = get_color_from_hex('#404040')
 
+# Calculate scale factors based on original design resolution
+original_design_width = 2350
+original_design_height = 1323
+
+# Calculate scale factors based on new target resolution
+target_width = 1920
+target_height = 1080
+
+scale_x = target_width / original_design_width
+scale_y = target_height / original_design_height
+
 
 class BackButton(ButtonBehavior, Image):
     def __init__(self, **kwargs):
@@ -103,17 +114,17 @@ class HomeScreen(Screen):
 
         # Load and place the smaller logo
         logo_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png'
-        self.logo = Image(source=logo_path, allow_stretch=True)
+        self.logo = Image(source=logo_path, allow_stretch=True, keep_ratio=True)
         self.logo.size_hint = None, None
-        self.logo.size = (dp(250), dp(250))
+        self.logo.size = (dp(250 * scale_x), dp(250 * scale_y))
         self.logo.pos_hint = {'center_x': 0.5, 'center_y': 0.85}
         self.layout.add_widget(self.logo)
 
         # Load and place the smaller Spotamix image
         spotamix_label_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png'
-        self.spotamix_label = Image(source=spotamix_label_path, allow_stretch=True)
+        self.spotamix_label = Image(source=spotamix_label_path, allow_stretch=True, keep_ratio=True)
         self.spotamix_label.size_hint = None, None
-        self.spotamix_label.size = (dp(250), dp(60))  # Half the size of the original
+        self.spotamix_label.size = (dp(250 * scale_x), dp(60 * scale_y))  # Half the size of the original
         self.spotamix_label.pos_hint = {'center_x': 0.5, 'center_y': 0.70}
         self.layout.add_widget(self.spotamix_label)
 
@@ -128,10 +139,10 @@ class HomeScreen(Screen):
         # Add a short description
         self.description = Label(
             text="Give us your favorite track and we'll give you a Spotify playlist with similar songs that you'll love.",
-            font_name='Antichona', font_size='40sp',
+            font_name='Antichona', font_size='30sp',
             color=get_color_from_hex('#FFFFFF'),
             size_hint=(None, None),
-            size=(Window.width * 0.8, dp(100)),
+            size=(Window.width * 0.8, dp(90) * scale_y),
             pos_hint={'center_x': 0.5, 'center_y': 0.60}
         )
         self.layout.add_widget(self.description)
@@ -155,10 +166,10 @@ class HomeScreen(Screen):
         # Add text "Or enter your playlist link"
         self.playlist_label = Label(
             text="Or enter your playlist link:",
-            font_name='Antichona', font_size='40sp',
+            font_name='Antichona', font_size='30sp',
             color=get_color_from_hex('#FFFFFF'),
             size_hint=(None, None),
-            size=(Window.width * 0.8, dp(40)),
+            size=(Window.width * 0.8, dp(40) * scale_y),
             pos_hint={'center_x': 0.5, 'center_y': 0.40}
         )
         self.layout.add_widget(self.playlist_label)
@@ -186,8 +197,8 @@ class HomeScreen(Screen):
         # Continue button (use the same style as in MainMenuScreen)
         self.continue_button = self.create_styled_button("Continue")
         self.continue_button.size_hint = (None, None)
-        self.continue_button.size = (Window.width * 0.4, dp(110))
-        self.continue_button.pos_hint = {'center_x': 0.5, 'y': 0.15}
+        self.continue_button.size = (Window.width * 0.4, dp(110) * scale_y)
+        self.continue_button.pos_hint = {'center_x': 0.5, 'y': 0.10}
         self.layout.add_widget(self.continue_button)
 
     def create_styled_button(self, text):

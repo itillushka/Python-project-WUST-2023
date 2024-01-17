@@ -12,9 +12,9 @@ from home_screen import HomeScreen
 from recommendations_screen import RecommendationsScreen
 
 
-# Set the configuration before any other Kivy components are imported
 Config.set('graphics', 'width', '2350')
 Config.set('graphics', 'height', '1323')
+# Config.set('graphics', 'fullscreen', 'auto')
 Config.write()
 
 # Set the window to be borderless for the rounded corners effect

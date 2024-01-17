@@ -4,13 +4,14 @@ from kivy.uix.screenmanager import Screen
 from kivy.uix.floatlayout import FloatLayout
 from kivy.uix.button import Button
 from kivy.uix.image import Image
-from kivy.uix.label import Label
 from kivy.core.window import Window
 from kivy.graphics import Color, RoundedRectangle, Rectangle
 from kivy.metrics import dp
 from kivy.utils import get_color_from_hex
 from kivy.core.text import LabelBase
 
+# Set the application to fullscreen
+Window.fullscreen = 'auto'
 
 # Custom fonts
 font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
@@ -18,6 +19,9 @@ LabelBase.register(name='AristaSans', fn_regular=font_path)
 font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/Antichona-VGlAy.ttf'
 LabelBase.register(name='Antichona', fn_regular=font_path)
 
+# Calculate scale factors
+scale_x = 1920 / 2350
+scale_y = 1080 / 1323
 
 class ExitButton(ButtonBehavior, Image):
     def __init__(self, **kwargs):
@@ -67,18 +71,18 @@ class MainMenuScreen(Screen):
         # Load the logo and set its size
         logo_path = (
             'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png')
-        self.logo = Image(source=logo_path, allow_stretch=True)
+        self.logo = Image(source=logo_path, allow_stretch=True, keep_ratio=True)
         self.logo.size_hint = None, None
-        self.logo.size = dp(500), dp(500)
+        self.logo.size = (dp(300) * scale_x, dp(300) * scale_y)
         self.logo.pos_hint = {'center_x': 0.5, 'center_y': 0.75}
         self.layout.add_widget(self.logo)
 
         # Add the "Spotamix" image below the logo
-        self.spotamix_label = Image(source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png', allow_stretch=True)
+        self.spotamix_label = Image(source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png', allow_stretch=True, keep_ratio=True)
         self.spotamix_label.size_hint = None, None
         self.spotamix_label.width = self.logo.width
         self.spotamix_label.height = self.logo.height
-        self.spotamix_label.pos_hint = {'center_x': 0.5, 'y': 0.3}
+        self.spotamix_label.pos_hint = {'center_x': 0.5, 'y': 0.4}
         self.layout.add_widget(self.spotamix_label)
 
         # Add Exit Button
@@ -94,8 +98,8 @@ class MainMenuScreen(Screen):
         self.login_button = self.create_styled_button("Login")
 
         # Adjust buttons width and height
-        button_width = Window.width * 0.4  # Adjust the width as needed
-        button_height = dp(110)
+        button_width = Window.width * 0.4 # Adjust the width as needed
+        button_height = dp(110) * scale_y
         self.continue_button.size = (button_width, button_height)
         self.login_button.size = (button_width, button_height)
 
