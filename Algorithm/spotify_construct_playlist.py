@@ -17,10 +17,10 @@ def construct_playlist(rec_playlist_df, sp, sourcePlaylist):
         Returns:
             None
     """
-    recs_to_add = rec_playlist_df[rec_playlist_df['ratings'] >= 3]['index'].values.tolist()[:100]
+    recs_to_add = rec_playlist_df[rec_playlist_df['ratings'] >= 6]['index'].values.tolist()[:60]
 
     playlist_recs = sp.user_playlist_create(username,
-                                            name='Recommended Songs for Playlist by AI TestIllia - {}'.format(
+                                            name='Recommended Songs for Playlist by AI - {}'.format(
                                                 sourcePlaylist['name']))
     songs = 0
     for i in recs_to_add:

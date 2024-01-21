@@ -8,7 +8,6 @@ from __init__ import cid, secret, redirect_uri, scope, hardcoded_token
 import requests
 
 
-
 # Create a SpotifyOAuth object
 def connect_sp():
     """
@@ -25,7 +24,7 @@ def connect_sp():
         response = requests.get(redirect_uri)
         response.raise_for_status()
     except requests.exceptions.RequestException:
-        print ("Something went wrong with the server.")
+        print("Something went wrong with the server.")
         return
 
     # Get access token

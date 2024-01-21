@@ -25,7 +25,7 @@ def collect_user_songs(sp, sourcePlaylistID):
     track_names = []
 
     for i in range(0, len(songs)):
-        if songs[i]['track']['id'] != None:  # Removes the local tracks in your playlist if there is any
+        if songs[i]['track']['id'] is not None:  # Removes the local tracks in your playlist if there is any
             track_ids.append(songs[i]['track']['id'])
             track_names.append(songs[i]['track']['name'])
 
