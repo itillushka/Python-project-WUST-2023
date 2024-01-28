@@ -10,13 +10,14 @@ from kivy.metrics import dp
 from kivy.utils import get_color_from_hex
 from kivy.core.text import LabelBase
 
+from Algorithm.config import abs_path_to_res
 # Set the application to fullscreen
 Window.fullscreen = 'auto'
 
 # Custom fonts
-font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
+font_path = abs_path_to_res + 'AristaSans-OV314.ttf'
 LabelBase.register(name='AristaSans', fn_regular=font_path)
-font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/Antichona-VGlAy.ttf'
+font_path = abs_path_to_res + 'Antichona-VGlAy.ttf'
 LabelBase.register(name='Antichona', fn_regular=font_path)
 
 # Calculate scale factors
@@ -26,8 +27,8 @@ scale_y = 1080 / 1323
 class ExitButton(ButtonBehavior, Image):
     def __init__(self, **kwargs):
         super(ExitButton, self).__init__(**kwargs)
-        self.normal_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit.png'
-        self.highlighted_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit_highlighted.png'
+        self.normal_source = abs_path_to_res + 'icon_exit.png'
+        self.highlighted_source = abs_path_to_res + 'icon_exit_highlighted.png'
         self.source = self.normal_source
         self.size_hint = (None, None)
         self.size = (50, 50)
@@ -61,7 +62,7 @@ class MainMenuScreen(Screen):
         self.add_widget(self.layout)
 
         # Load the background image
-        bg_path = 'interface/resources/spotamix_background_main.png'
+        bg_path = abs_path_to_res + 'spotamix_background_main.png'
         self.bg_texture = Image(source=bg_path).texture
 
         # Draw the background
@@ -69,8 +70,7 @@ class MainMenuScreen(Screen):
             Rectangle(texture=self.bg_texture, size=Window.size, pos=(0, 0))
 
         # Load the logo and set its size
-        logo_path = (
-            'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png')
+        logo_path = (abs_path_to_res + 'logo_spotamix.png')
         self.logo = Image(source=logo_path, allow_stretch=True, keep_ratio=True)
         self.logo.size_hint = None, None
         self.logo.size = (dp(300) * scale_x, dp(300) * scale_y)
@@ -78,7 +78,7 @@ class MainMenuScreen(Screen):
         self.layout.add_widget(self.logo)
 
         # Add the "Spotamix" image below the logo
-        self.spotamix_label = Image(source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png', allow_stretch=True, keep_ratio=True)
+        self.spotamix_label = Image(source=(abs_path_to_res + 'spotamix_name.png'), allow_stretch=True, keep_ratio=True)
         self.spotamix_label.size_hint = None, None
         self.spotamix_label.width = self.logo.width
         self.spotamix_label.height = self.logo.height
@@ -90,8 +90,8 @@ class MainMenuScreen(Screen):
         self.layout.add_widget(exit_button)
 
         # Define paths for normal and hover background images
-        self.normal_bg = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png'
-        self.hover_bg = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background_highlighted.png'
+        self.normal_bg = abs_path_to_res + 'button_background.png'
+        self.hover_bg = abs_path_to_res + 'button_background_highlighted.png'
 
         # Create buttons with their styles
         self.continue_button = self.create_styled_button("Continue without login")

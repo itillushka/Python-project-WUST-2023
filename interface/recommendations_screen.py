@@ -1,3 +1,5 @@
+import webbrowser
+
 from kivy.app import App
 from kivy.lang import Builder
 from kivy.uix.behaviors import ButtonBehavior
@@ -12,6 +14,8 @@ from kivy.graphics import Color, Rectangle
 from kivy.graphics import Color, RoundedRectangle
 from kivy.uix.widget import Widget
 from kivy.uix.screenmanager import Screen
+
+from Algorithm.config import abs_path_to_res
 
 # Define the .kv design
 kv_song_list = '''
@@ -30,16 +34,16 @@ kv_song_list = '''
         on_press: root.on_play_button_press()
     Label:
         text: root.title
-        font_name: 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
+        font_name: abs_path_to_res + 'AristaSans-OV314.ttf'
         color: (0.4,0.89, 0.55, 1) if root.title else (1, 1, 1, 1)
         size_hint_x: 0.5
     Label:
         text: root.artist
-        font_name: 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
+        font_name: abs_path_to_res + 'AristaSans-OV314.ttf'
         size_hint_x: 0.3
     Label:
         text: root.duration
-        font_name: 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
+        font_name: abs_path_to_res + 'AristaSans-OV314.ttf'
         size_hint_x: 0.2
 
 <SongsRecycleView>:
@@ -69,7 +73,7 @@ class SongItem(ButtonBehavior, BoxLayout):
     title = StringProperty('')
     artist = StringProperty('')
     duration = StringProperty('')
-    play_button = StringProperty('C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_play_button.png')
+    play_button = StringProperty(abs_path_to_res + 'icon_play_button.png')
 
     def on_play_button_press(self):
         print("The song is being played")
@@ -84,29 +88,46 @@ class PlayButton(ButtonBehavior, Image):
         pos = args[1]
         inside = self.collide_point(*self.to_widget(*pos))
         if inside:
-            self.source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_play_button_highlighted.png'
+            self.source = abs_path_to_res + 'icon_play_button_highlighted.png'
         else:
-            self.source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_play_button.png'
+            self.source = abs_path_to_res + 'icon_play_button.png'
 
 
 
 class SongsRecycleView(RecycleView):
     def __init__(self, **kwargs):
         super(SongsRecycleView, self).__init__(**kwargs)
-        self.data = [{'title': f'Song {i}', 'artist': f'Artist {i}', 'duration': '3:00',
-                      'play_button': 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_play_button.png'}
-                     for i in range(50)]
+
+        # Bind the update_track_info method to the on_track_info event of the App instance
+        App.get_running_app().bind(track_info=self.update_track_info)
+
+        # Call update_track_info manually once to initialize self.data
+        self.update_track_info()
+
+    def update_track_info(self, *args):
+        # Check if the track_info attribute is set on the App instance
+        if hasattr(App.get_running_app(), 'track_info') and App.get_running_app().track_info is not None:
+            track_info = App.get_running_app().track_info
+        else:
+            track_info = []
+
+        # Add index and icon to each track
+        for i, track in enumerate(track_info):
+            track['play_button'] = abs_path_to_res + 'icon_play_button.png'
+
+        # Use the track information to populate the RecycleView
+        self.data = track_info
+
         # Set the background for the entire window
         with Window.canvas.before:
             Color(rgba=(1, 1, 1, 1))  # White color
             self.bg = Rectangle(
-                source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_background_main.png',
+                source=(abs_path_to_res + 'spotamix_background_main.png'),
                 size=(Window.width, Window.height))
 
         # Adjust the size and position of the RecycleView
         self.size_hint = (0.8, 0.6)
         self.pos_hint = {'center_x': 0.5, 'center_y': 0.35}
-        pass
 
 
 # Define the custom button class
@@ -119,21 +140,21 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
 
         # Image as the background
         self.background_image = Image(
-            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png',
+            source=(abs_path_to_res + 'button_background.png'),
             allow_stretch=True,
             keep_ratio=True,
             size_hint=(1, 1),
             pos_hint={'center_x': 0.5, 'center_y': 0.40}
         )
 
-        self.default_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png'
-        self.highlight_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background_highlighted.png'
+        self.default_source = abs_path_to_res + 'button_background.png'
+        self.highlight_source = abs_path_to_res + 'button_background_highlighted.png'
 
         # Add the background image as a widget to the button
         self.add_widget(self.background_image)
 
         # Full path to the font file
-        font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
+        font_path = abs_path_to_res + 'AristaSans-OV314.ttf'
 
         # Label for the text
         self.label = Label(
@@ -177,14 +198,16 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
 
     def on_press(self):
         # Add action for when the button is pressed
+        new_playlist_link = App.get_running_app().new_playlist_link
+        webbrowser.open(new_playlist_link)
         print("Navigate to the spotify playlist.")
 
 
 class BackButton(ButtonBehavior, Image):
     def __init__(self, **kwargs):
         super(BackButton, self).__init__(**kwargs)
-        self.normal_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_go_back_button.png'
-        self.highlighted_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_go_back_button_highlighted.png'
+        self.normal_source = abs_path_to_res + 'icon_go_back_button.png'
+        self.highlighted_source = abs_path_to_res + 'icon_go_back_button_highlighted.png'
         self.source = self.normal_source
         self.size_hint = (None, None)
         self.size = (50, 50)
@@ -221,8 +244,8 @@ class BackButton(ButtonBehavior, Image):
 class ExitButton(ButtonBehavior, Image):
     def __init__(self, **kwargs):
         super(ExitButton, self).__init__(**kwargs)
-        self.normal_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit.png'
-        self.highlighted_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit_highlighted.png'
+        self.normal_source = abs_path_to_res + 'icon_exit.png'
+        self.highlighted_source = abs_path_to_res + 'icon_exit_highlighted.png'
         self.source = self.normal_source
         self.size_hint = (None, None)
         self.size = (50, 50)
@@ -253,12 +276,12 @@ class RecommendationsScreen(Screen):
 
         # Images
         logo_image = Image(
-            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png',
+            source=(abs_path_to_res + 'logo_spotamix.png'),
             size_hint_y=None,
             height=Window.height * 0.1
         )
         name_image = Image(
-            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png',
+            source=(abs_path_to_res + 'spotamix_name.png'),
             size_hint_y=None,
             height=Window.height * 0.03
         )

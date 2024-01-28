@@ -2,7 +2,7 @@
 This module provides a function for collecting user songs from a Spotify playlist.
 """
 
-from __init__ import username
+from Algorithm.config import username
 
 
 def collect_user_songs(sp, sourcePlaylistID):

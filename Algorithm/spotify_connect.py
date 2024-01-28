@@ -4,7 +4,7 @@ This module provides a function for connecting to the Spotify API.
 
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from __init__ import cid, secret, redirect_uri, scope, hardcoded_token
+from Algorithm.config import cid, secret, redirect_uri, scope, hardcoded_token
 import requests
 
 

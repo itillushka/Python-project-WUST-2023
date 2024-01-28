@@ -11,7 +11,10 @@ from kivy.core.window import Window
 from kivy.graphics import Color, Rectangle, RoundedRectangle
 from kivy.metrics import dp
 from kivy.utils import get_color_from_hex
-from kivy.lang import Builder
+
+from Algorithm.interface_recommendation_adapter import recommend_song
+from Algorithm.spotify_connect import connect_sp
+from Algorithm.config import abs_path_to_res
 
 # Define the active and inactive colors
 active_input_color = get_color_from_hex('#67E26D')
@@ -35,8 +38,8 @@ scale_y = target_height / original_design_height
 class BackButton(ButtonBehavior, Image):
     def __init__(self, **kwargs):
         super(BackButton, self).__init__(**kwargs)
-        self.normal_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_go_back_button.png'
-        self.highlighted_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_go_back_button_highlighted.png'
+        self.normal_source = abs_path_to_res + 'icon_go_back_button.png'
+        self.highlighted_source = abs_path_to_res + 'icon_go_back_button_highlighted.png'
         self.source = self.normal_source
         self.size_hint = (None, None)
         self.size = (50, 50)
@@ -73,8 +76,8 @@ class BackButton(ButtonBehavior, Image):
 class ExitButton(ButtonBehavior, Image):
     def __init__(self, **kwargs):
         super(ExitButton, self).__init__(**kwargs)
-        self.normal_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit.png'
-        self.highlighted_source = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/icon_exit_highlighted.png'
+        self.normal_source = abs_path_to_res + 'icon_exit.png'
+        self.highlighted_source = abs_path_to_res + 'icon_exit_highlighted.png'
         self.source = self.normal_source
         self.size_hint = (None, None)
         self.size = (50, 50)
@@ -109,11 +112,11 @@ class HomeScreen(Screen):
 
         # Set the background image
         with self.canvas.before:
-            bg_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_background_main.png'
+            bg_path = abs_path_to_res + 'spotamix_background_main.png'
             self.bg = Rectangle(source=bg_path, size=(Window.width, Window.height))
 
         # Load and place the smaller logo
-        logo_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/logo_spotamix.png'
+        logo_path = abs_path_to_res + 'logo_spotamix.png'
         self.logo = Image(source=logo_path, allow_stretch=True, keep_ratio=True)
         self.logo.size_hint = None, None
         self.logo.size = (dp(250 * scale_x), dp(250 * scale_y))
@@ -121,7 +124,7 @@ class HomeScreen(Screen):
         self.layout.add_widget(self.logo)
 
         # Load and place the smaller Spotamix image
-        spotamix_label_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/spotamix_name.png'
+        spotamix_label_path = abs_path_to_res + 'spotamix_name.png'
         self.spotamix_label = Image(source=spotamix_label_path, allow_stretch=True, keep_ratio=True)
         self.spotamix_label.size_hint = None, None
         self.spotamix_label.size = (dp(250 * scale_x), dp(60 * scale_y))  # Half the size of the original
@@ -191,8 +194,8 @@ class HomeScreen(Screen):
         self.layout.add_widget(self.playlist_input)
 
         # Define paths for normal and hover background images (same as MainMenuScreen)
-        self.normal_bg = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background.png'
-        self.hover_bg = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/button_background_highlighted.png'
+        self.normal_bg = abs_path_to_res + 'button_background.png'
+        self.hover_bg = abs_path_to_res + 'button_background_highlighted.png'
 
         # Continue button (use the same style as in MainMenuScreen)
         self.continue_button = self.create_styled_button("Continue")
@@ -219,6 +222,7 @@ class HomeScreen(Screen):
     def on_input_song(self, instance, value):
         if value.strip():
             # If there is text in the song input, disable the playlist input
+
             self.playlist_input.disabled = True
         else:
             # If the song input is empty, enable the playlist input
@@ -245,24 +249,18 @@ class HomeScreen(Screen):
     def go_to_recommendations_screen(self, instance):
         # Check if either of the text inputs is filled
         if self.song_input.text.strip() or self.playlist_input.text.strip():
+
+            # save playlist link
+            sourcePlaylistID = self.playlist_input.text.strip()
+            sp = connect_sp()
+            new_playlist_link, track_info = recommend_song(sp, sourcePlaylistID)
+
+            # Set the new_playlist_link as an attribute of the App instance
+            App.get_running_app().new_playlist_link = new_playlist_link
+            App.get_running_app().track_info = track_info
             print("Proceeding to the next screen...")
             # Change the current screen to the recommendations screen
             self.manager.current = 'recommendations'
+            return new_playlist_link
         else:
             print("Please fill in at least one of the inputs.")
-
-    def on_input_song(self, instance, value):
-        if value.strip():
-            # If there is text in the song input, disable the playlist input
-            self.playlist_input.disabled = True
-        else:
-            # If the song input is empty, enable the playlist input
-            self.playlist_input.disabled = False
-
-    def on_input_playlist(self, instance, value):
-        if value.strip():
-            # If there is text in the playlist input, disable the song input
-            self.song_input.disabled = True
-        else:
-            # If the playlist input is empty, enable the song input
-            self.song_input.disabled = False

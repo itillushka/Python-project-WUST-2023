@@ -2,11 +2,13 @@ from kivy.app import App
 from kivy.uix.button import Button
 from kivy.core.text import LabelBase
 
+from Algorithm.config import abs_path_to_res
+
 # Register the custom font
-font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/Antichona-VGlAy.ttf'
+font_path = abs_path_to_res + 'Antichona-VGlAy.ttf'
 LabelBase.register(name='Antichona', fn_regular=font_path)
 
-font_path = 'C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/AristaSans-OV314.ttf'
+font_path = abs_path_to_res + 'AristaSans-OV314.ttf'
 LabelBase.register(name='AristaSans', fn_regular=font_path)
 
 class TestApp(App):

@@ -5,6 +5,8 @@ from kivy.graphics import Color, RoundedRectangle
 from kivy.core.window import Window
 from kivy.utils import get_color_from_hex
 
+from Algorithm.config import abs_path_to_res
+
 
 class SplashScreen(Screen):
     def __init__(self, **kwargs):
@@ -18,7 +20,7 @@ class SplashScreen(Screen):
 
         # Create a Video widget instance
         self.animation = Video(
-            source='C:/Users/marta/PycharmProjects/Python-project-WUST-2023-develop/interface/resources/animation_spotamix_cropped.mp4',
+            source=(abs_path_to_res + 'animation_spotamix_cropped.mp4'),
             state='play',  # Start playing the video automatically
             options={'eos': 'loop'},  # Loop the video when it reaches the end
             allow_stretch=True  # Allow the video to stretch to fill the space

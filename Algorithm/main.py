@@ -4,16 +4,20 @@ It collects user songs, fetches audio features, creates and rates playlists, pre
 and constructs the final playlist.
 """
 
-from spotify_construct_playlist import construct_playlist
+"""
+    USE ONLY TO TEST BACKEND, TESTS ONLY ALGORITHM, WORKS THROUGH TERMINAL
+"""
+
+"""from Algorithm.spotify_construct_playlist import construct_playlist
 import threading
-from server import run
-from spotify_connect import connect_sp
-from spotify_collect_user_songs import collect_user_songs
-from spotify_fetch_features import fetch_audio_features
-from create_ratings import rate_songs
-from process_database import create_playlist_df, assign_ratings, create_rec_playlist_df, assign_and_sort_ratings
-from predict_track_ratings import predict_track_ratings
-from recommendation_algorithm import recommendation_algorithm
+from Algorithm.server import run
+from Algorithm.spotify_connect import connect_sp
+from Algorithm.spotify_collect_user_songs import collect_user_songs
+from Algorithm.spotify_fetch_features import fetch_audio_features
+from Algorithm.create_ratings import rate_songs
+from Algorithm.process_database import create_playlist_df, assign_ratings, create_rec_playlist_df, assign_and_sort_ratings
+from Algorithm.predict_track_ratings import predict_track_ratings
+from Algorithm.recommendation_algorithm import recommendation_algorithm
 
 # Start the server in a separate thread
 server_thread = threading.Thread(target=run)
@@ -51,4 +55,4 @@ y_pred_class = predict_track_ratings(tree_grid, X_train_last, y_train, rec_playl
 
 rec_playlist_df = assign_and_sort_ratings(rec_playlist_df, y_pred_class)
 
-construct_playlist(rec_playlist_df, sp, sourcePlaylist)
+construct_playlist(rec_playlist_df, sp, sourcePlaylist)"""
