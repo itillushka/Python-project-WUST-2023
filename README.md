@@ -15,9 +15,13 @@ The project is structured into several modules:
 To set up the project on your local machine, follow these steps:
 
 1. Clone the repository to your local machine.
-2. Open the `config.py` file and change the `abs_path_to_res` variable to the path where you cloned the repository.
-3. Run the `main.py` file located in the `interface` directory. This is the entry point of the application. On the first run, a link will be printed in the terminal.
-4. Follow this link and paste it back into the terminal after web authentication process. This will authenticate your Spotify account and allow the application to fetch data from the Spotify API.
+2. Install the necessary Python packages. You can do this by running the following command in your terminal:
+```bash
+pip install -r requirements.txt
+```
+3. Open the `config.py` file and change the `abs_path_to_res` variable to the path where you cloned the repository.
+4. Run the `main.py` file located in the `interface` directory. This is the entry point of the application. On the first run, a link will be printed in the terminal.
+5. Follow this link and paste it back into the terminal after web authentication process. This will authenticate your Spotify account and allow the application to fetch data from the Spotify API.
 
 ## Usage
 
