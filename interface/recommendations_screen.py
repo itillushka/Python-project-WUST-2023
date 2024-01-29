@@ -68,23 +68,68 @@ kv_song_list = '''
 Builder.load_string(kv_song_list)
 
 
-# Define the SongItem class
 class SongItem(ButtonBehavior, BoxLayout):
+    """
+        A custom widget representing a song item, combining button behavior with a box layout.
+
+        Attributes:
+            title (StringProperty): The title of the song.
+            artist (StringProperty): The artist of the song.
+            duration (StringProperty): The duration of the song.
+            play_button (StringProperty): Path to the play button image.
+
+        Methods:
+            on_play_button_press(): Handles the event when the play button is pressed.
+        """
     title = StringProperty('')
     artist = StringProperty('')
     duration = StringProperty('')
     play_button = StringProperty(abs_path_to_res + 'icon_play_button.png')
 
     def on_play_button_press(self):
+        """
+        Handles the play button press event.
+
+        This method is called when the play button in the song item is pressed.
+        """
+
         print("The song is being played")
 
 
 class PlayButton(ButtonBehavior, Image):
+    """
+    A custom play button widget, inheriting from ButtonBehavior and Image.
+
+    This button changes its appearance when hovered over with the mouse.
+
+    Methods:
+        on_mouse_pos(*args): Handles the change of the button's appearance based on mouse position.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes the PlayButton instance.
+
+        Binds the necessary events for functionality.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
+
         super(PlayButton, self).__init__(**kwargs)
         Window.bind(mouse_pos=self.on_mouse_pos)
 
     def on_mouse_pos(self, *args):
+        """
+        Handles the mouse position event for hover effect.
+
+        Changes the source of the button image when the mouse hovers over it.
+
+        Args:
+            *args: Variable length argument list, where the second argument
+                   is expected to be the mouse position.
+        """
+
         pos = args[1]
         inside = self.collide_point(*self.to_widget(*pos))
         if inside:
@@ -93,52 +138,88 @@ class PlayButton(ButtonBehavior, Image):
             self.source = abs_path_to_res + 'icon_play_button.png'
 
 
-
 class SongsRecycleView(RecycleView):
+    """
+    A RecycleView widget customized for displaying a list of songs.
+
+    This class handles the display and update of song information in a recycle view format.
+
+    Methods:
+        update_track_info(*args): Updates the track information in the view.
+    """
+
     def __init__(self, **kwargs):
         super(SongsRecycleView, self).__init__(**kwargs)
 
-        # Bind the update_track_info method to the on_track_info event of the App instance
+        # Bind the update_track_info method to track info updates
         App.get_running_app().bind(track_info=self.update_track_info)
 
-        # Call update_track_info manually once to initialize self.data
+        # Initialize the view with current track information
         self.update_track_info()
 
     def update_track_info(self, *args):
-        # Check if the track_info attribute is set on the App instance
+        """
+        Updates the track information in the view.
+
+        Retrieves track information from the App instance and updates the view. If no
+        track information is available, it displays an empty list.
+
+        Args:
+            *args: Additional arguments, not used in this method.
+        """
+
+        # Retrieve track information from the App instance
         if hasattr(App.get_running_app(), 'track_info') and App.get_running_app().track_info is not None:
             track_info = App.get_running_app().track_info
         else:
             track_info = []
 
-        # Add index and icon to each track
+        # Add play button icon to each track
         for i, track in enumerate(track_info):
             track['play_button'] = abs_path_to_res + 'icon_play_button.png'
 
-        # Use the track information to populate the RecycleView
+        # Update the RecycleView data
         self.data = track_info
 
-        # Set the background for the entire window
+        # Set up the background for the RecycleView
         with Window.canvas.before:
-            Color(rgba=(1, 1, 1, 1))  # White color
+            Color(rgba=(1, 1, 1, 1))
             self.bg = Rectangle(
                 source=(abs_path_to_res + 'spotamix_background_main.png'),
                 size=(Window.width, Window.height))
 
-        # Adjust the size and position of the RecycleView
+        # Adjust size and position of the RecycleView
         self.size_hint = (0.8, 0.6)
         self.pos_hint = {'center_x': 0.5, 'center_y': 0.35}
 
 
-# Define the custom button class
 class PlaylistButton(ButtonBehavior, FloatLayout):
+    """
+    A custom button widget for navigating to a Spotify playlist, combining button behavior with a float layout.
+
+    Methods:
+        on_mouse_pos(*args): Handles the change of the button's appearance based on mouse position.
+        on_enter(): Changes the button's background to a highlighted version when hovered.
+        on_leave(): Reverts the button's background to the default when not hovered.
+        on_press(): Defines the action when the button is pressed.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes the PlaylistButton instance.
+
+        Sets up the button's size, position, background image, label, and binds the necessary events for functionality.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
+
         super(PlaylistButton, self).__init__(**kwargs)
         self.size_hint = (None, None)
-        self.size = (Window.width * 0.8, 60)  # Adjust the size as needed
+        self.size = (Window.width * 0.8, 60)
         self.pos_hint = {'center_x': 0.5, 'center_y': 0.40}
 
-        # Image as the background
+        # Setup background image
         self.background_image = Image(
             source=(abs_path_to_res + 'button_background.png'),
             allow_stretch=True,
@@ -149,14 +230,12 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
 
         self.default_source = abs_path_to_res + 'button_background.png'
         self.highlight_source = abs_path_to_res + 'button_background_highlighted.png'
-
-        # Add the background image as a widget to the button
         self.add_widget(self.background_image)
 
         # Full path to the font file
         font_path = abs_path_to_res + 'AristaSans-OV314.ttf'
 
-        # Label for the text
+        # Setup label
         self.label = Label(
             text='Go to your playlist',
             font_name=font_path,
@@ -172,11 +251,17 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
         # Bind on_enter and on_leave events
         self.bind(on_enter=self.on_enter, on_leave=self.on_leave)
 
-        # Register for mouse enter/leave events
+        # Bind mouse events for hover effects
         Window.bind(mouse_pos=self.on_mouse_pos)
 
     def on_mouse_pos(self, *args):
-        # Check if mouse is over the button
+        """
+        Handles the mouse position event for hover effect.
+
+        Args:
+            *args: Variable length argument list, where the second argument
+                   is expected to be the mouse position.
+        """
         pos = args[1]
         inside = self.collide_point(*self.to_widget(*pos))
         if inside:
@@ -189,22 +274,57 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
                 self.on_leave()
 
     def on_enter(self):
-        # Change the background image to the highlighted version
+        """
+        Changes the button's background to the highlighted version when hovered.
+        """
         self.background_image.source = self.highlight_source
 
     def on_leave(self):
-        # Change the background image back to the default
+        """
+        Reverts the button's background to the default when not hovered.
+        """
         self.background_image.source = self.default_source
 
     def on_press(self):
-        # Add action for when the button is pressed
+        """
+        Defines the action to be taken when the button is pressed.
+
+        Opens the Spotify playlist link in a web browser.
+        """
         new_playlist_link = App.get_running_app().new_playlist_link
         webbrowser.open(new_playlist_link)
         print("Navigate to the spotify playlist.")
 
 
 class BackButton(ButtonBehavior, Image):
+    """
+    A custom button widget designed to act as a back button.
+
+    Inherits from ButtonBehavior and Image to provide interactive functionality.
+    The button changes its appearance when hovered over and returns to the main
+    menu when clicked.
+
+    Attributes:
+        normal_source (str): Path to the image for the button's normal state.
+        highlighted_source (str): Path to the image for the button's highlighted state.
+        size_hint (tuple): Size hint for the button's size.
+        size (tuple): Size of the button in pixels.
+        pos_hint (dict): Position hint for the button's position on the screen.
+        keep_ratio (bool): Maintain the aspect ratio of the button's image.
+        allow_stretch (bool): Allow stretching of the button's image.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes the BackButton instance.
+
+        Sets up the button with its normal and highlighted images, size, position,
+        and binds the necessary events for functionality.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
+
         super(BackButton, self).__init__(**kwargs)
         self.normal_source = abs_path_to_res + 'icon_go_back_button.png'
         self.highlighted_source = abs_path_to_res + 'icon_go_back_button_highlighted.png'
@@ -214,15 +334,19 @@ class BackButton(ButtonBehavior, Image):
         self.pos_hint = {'x': 0.01, 'top': 0.99}
         self.keep_ratio = True
         self.allow_stretch = True
-
-        # Bind the on_release event to the go_to_main_menu method
         self.bind(on_release=self.go_to_main_menu)
-
-        # Bind mouse position to change button appearance on hover
         Window.bind(mouse_pos=self.on_mouse_pos)
 
     def on_mouse_pos(self, *args):
-        # Change the source of the button when mouse hovers over it
+        """
+        Handles the mouse position event for hover effect.
+
+        Changes the source of the button image when the mouse hovers over it.
+
+        Args:
+            *args: Variable length argument list, where the second argument
+                   is expected to be the mouse position.
+        """
         pos = args[1]
         inside = self.collide_point(*self.to_widget(*pos))
         if inside:
@@ -231,18 +355,51 @@ class BackButton(ButtonBehavior, Image):
             self.source = self.normal_source
 
     def go_to_main_menu(self, instance):
-        # Get the current screen (which is a direct child of ScreenManager)
+        """
+        Transitions to the main menu screen.
+
+        This method is called when the back button is clicked. It navigates the user
+        back to the main menu of the application.
+
+        Args:
+            instance: The instance of the button that was clicked.
+        """
         current_screen = self.parent
         while current_screen and not isinstance(current_screen, Screen):
             current_screen = current_screen.parent
 
-        # Now we can check if we have a Screen and its manager exists
         if current_screen and hasattr(current_screen, 'manager'):
             current_screen.manager.current = 'main_menu'
 
 
 class ExitButton(ButtonBehavior, Image):
+    """
+    A custom button widget designed to exit the application.
+
+    Inherits from ButtonBehavior and Image. The button changes its appearance
+    when hovered over and closes the application when clicked.
+
+    Attributes:
+        normal_source (str): Path to the image for the button's normal state.
+        highlighted_source (str): Path to the image for the button's highlighted state.
+        size_hint (tuple): Size hint for the button's size.
+        size (tuple): Size of the button in pixels.
+        pos_hint (dict): Position hint for the button's position on the screen.
+        keep_ratio (bool): Maintain the aspect ratio of the button's image.
+        allow_stretch (bool): Allow stretching of the button's image.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes the ExitButton instance.
+
+        Sets up the button with its normal and highlighted images, size, position,
+        and binds the necessary events for functionality.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
+
         super(ExitButton, self).__init__(**kwargs)
         self.normal_source = abs_path_to_res + 'icon_exit.png'
         self.highlighted_source = abs_path_to_res + 'icon_exit_highlighted.png'
@@ -253,10 +410,19 @@ class ExitButton(ButtonBehavior, Image):
         self.keep_ratio = True
         self.allow_stretch = True
         self.bind(on_release=self.exit_app)
-
         Window.bind(mouse_pos=self.on_mouse_pos)
 
     def on_mouse_pos(self, *args):
+        """
+        Handles the mouse position event for hover effect.
+
+        Changes the source of the button image when the mouse hovers over it.
+
+        Args:
+            *args: Variable length argument list, where the second argument
+                   is expected to be the mouse position.
+        """
+
         pos = args[1]
         inside = self.collide_point(*self.to_widget(*pos))
         if inside:
@@ -265,13 +431,44 @@ class ExitButton(ButtonBehavior, Image):
             self.source = self.normal_source
 
     def exit_app(self, instance):
+        """
+        Closes the application.
+
+        This method is called when the exit button is clicked.
+
+        Args:
+            instance: The instance of the button that was clicked.
+        """
+
         App.get_running_app().stop()
 
 
 class RecommendationsScreen(Screen):
+    """
+    A screen class that displays recommendations.
+
+    This class is responsible for setting up the recommendations screen, including
+    the layout, images, buttons, and the song recycle view. It inherits from the
+    Screen class of Kivy.
+
+    Attributes:
+        main_layout (BoxLayout): The main container for the screen elements.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes the RecommendationsScreen instance.
+
+        Sets up the main layout, adds images, buttons, and the songs recycle view
+        to the layout.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
+
         super(RecommendationsScreen, self).__init__(**kwargs)
-        # Create a BoxLayout as the main container for the screen
+
+        # Main vertical layout
         main_layout = BoxLayout(orientation='vertical', padding=[0, 10, 0, 10])
 
         # Images

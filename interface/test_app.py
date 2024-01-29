@@ -64,8 +64,20 @@ kv_song_list = '''
 Builder.load_string(kv_song_list)
 
 
-# Define the SongItem class
 class SongItem(BoxLayout):
+    """
+    A custom BoxLayout widget representing an individual song item.
+
+    This widget displays details of a song, including its title, artist, duration,
+    and a play button.
+
+    Attributes:
+        title (StringProperty): The title of the song.
+        artist (StringProperty): The artist of the song.
+        duration (StringProperty): The duration of the song.
+        play_button (StringProperty): Path to the play button image.
+    """
+
     title = StringProperty('')
     artist = StringProperty('')
     duration = StringProperty('')
@@ -73,14 +85,34 @@ class SongItem(BoxLayout):
 
 
 class SongsRecycleView(RecycleView):
+    """
+    A RecycleView widget customized for displaying a list of songs.
+
+    Inherits from RecycleView and is used to display multiple SongItem widgets in a
+    scrollable list.
+
+    Attributes:
+        data (list): A list of dictionaries containing song information.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes the SongsRecycleView instance.
+
+        Sets up the view with a predefined list of songs and configures the background.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
+
         super(SongsRecycleView, self).__init__(**kwargs)
         self.data = [{'title': f'Song {i}', 'artist': f'Artist {i}', 'duration': '3:00',
                       'play_button': (abs_path_to_res + 'icon_play_button.png')}
                      for i in range(50)]
+
         # Set the background for the entire window
         with Window.canvas.before:
-            Color(rgba=(1, 1, 1, 1))  # White color
+            Color(rgba=(1, 1, 1, 1))
             self.bg = Rectangle(
                 source=(abs_path_to_res + 'spotamix_background_main.png'),
                 size=(Window.width, Window.height))
@@ -91,12 +123,31 @@ class SongsRecycleView(RecycleView):
         pass
 
 
-# Define the custom button class
 class PlaylistButton(ButtonBehavior, FloatLayout):
+    """
+    A custom button class with an image background and text, used to navigate to a playlist.
+
+    Inherits from ButtonBehavior and FloatLayout, allowing for button functionality with
+    custom layout and styling.
+
+    Attributes:
+        background_image (Image): The background image of the button.
+        label (Label): The text label displayed on the button.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes the PlaylistButton instance.
+
+        Sets up the button with a background image, label, and size and position configurations.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
+
         super(PlaylistButton, self).__init__(**kwargs)
         self.size_hint = (None, None)
-        self.size = (Window.width * 0.8, 60)  # Adjust the size as needed
+        self.size = (Window.width * 0.8, 60)
         self.pos_hint = {'center_x': 0.5, 'center_y': 0.5}
 
         # Image as the background
@@ -126,12 +177,37 @@ class PlaylistButton(ButtonBehavior, FloatLayout):
         self.add_widget(self.label)
 
     def on_press(self):
-        # Add action for when the button is pressed
+        """
+        Defines the action to be taken when the button is pressed.
+
+        Currently, it prints a message indicating navigation to the playlist screen.
+        """
         print("Navigate to the playlist screen.")
 
 
 class RecommendationsScreen(BoxLayout):
+    """
+    A BoxLayout class for displaying recommendations, used for testing purposes.
+
+    This class represents a screen layout for testing the recommendations feature.
+    It includes images, a custom recycle view for song listings, and a playlist button.
+    This version of the screen is specifically designed for testing, separate from
+    the main application's recommendations screen.
+
+    Attributes:
+        None specific to testing.
+    """
+
     def __init__(self, **kwargs):
+        """
+        Initializes the RecommendationsScreen instance for testing.
+
+        Sets up the layout with images, a custom songs recycle view, and a playlist button.
+
+        Args:
+            **kwargs: Arbitrary keyword arguments passed to the superclass.
+        """
+
         super(RecommendationsScreen, self).__init__(**kwargs)
         self.orientation = 'vertical'
         self.padding = [0, 10, 0, 10]
@@ -181,7 +257,24 @@ class RecommendationsScreen(BoxLayout):
 
 
 class MyApp(App):
+    """
+    The main App class for testing the RecommendationsScreen.
+
+    This class builds the app using the RecommendationsScreen, designed for testing
+    the layout and functionality of the recommendations feature.
+
+    Methods:
+        build(): Builds the app with the RecommendationsScreen for testing.
+    """
+
     def build(self):
+        """
+        Builds the app with the RecommendationsScreen.
+
+        Returns:
+            RecommendationsScreen: The main widget of the app, used for testing.
+        """
+
         return RecommendationsScreen()
 
 
