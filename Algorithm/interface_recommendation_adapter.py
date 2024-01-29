@@ -56,7 +56,7 @@ def recommend_song(sp, sourcePlaylistID):
         track_info = []
         for i in range(0, len(rec_ids), 50):
             response = sp.tracks(rec_ids[i:i + 50])
-            response.raise_for_status()  # Raise an HTTPError if the response was an error
+            #response.raise_for_status()  # Raise an HTTPError if the response was an error
             tracks = response['tracks']
             for track in tracks:
                 duration_in_min_sec = convert_ms_to_min_sec(track['duration_ms'])

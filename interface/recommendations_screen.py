@@ -34,16 +34,16 @@ kv_song_list = '''
         on_press: root.on_play_button_press()
     Label:
         text: root.title
-        font_name: abs_path_to_res + 'AristaSans-OV314.ttf'
+        font_name: 'C:/Users/illia/OneDrive/Рабочий стол/Study/Python Programming/sem zim 23-24/Python-project/Python-project-WUST-2023/interface/resources/AristaSans-OV314.ttf'
         color: (0.4,0.89, 0.55, 1) if root.title else (1, 1, 1, 1)
         size_hint_x: 0.5
     Label:
         text: root.artist
-        font_name: abs_path_to_res + 'AristaSans-OV314.ttf'
+        font_name: 'C:/Users/illia/OneDrive/Рабочий стол/Study/Python Programming/sem zim 23-24/Python-project/Python-project-WUST-2023/interface/resources/AristaSans-OV314.ttf'
         size_hint_x: 0.3
     Label:
         text: root.duration
-        font_name: abs_path_to_res + 'AristaSans-OV314.ttf'
+        font_name: 'C:/Users/illia/OneDrive/Рабочий стол/Study/Python Programming/sem zim 23-24/Python-project/Python-project-WUST-2023/interface/resources/AristaSans-OV314.ttf'
         size_hint_x: 0.2
 
 <SongsRecycleView>:

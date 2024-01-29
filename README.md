@@ -2,6 +2,18 @@
 
 This project is a music recommendation system built with Python. It uses the Spotify API to fetch data about songs and playlists, and applies a recommendation algorithm to suggest songs that the user might like.
 
+![Login Screen](./images/first_screen.png)
+The image above shows the login screen of the application.
+
+![Home Screen](./images/home_screen.png)
+The image above shows the home screen of the application.
+
+![Recommendation Screen](./images/recommendation_screen.png)
+The image above shows the recommendation screen of the application.
+
+![Playlist Screen](./images/playlist_screen.png)
+The image above shows the spotify playlist located in web browser.
+
 ## Project Structure
 
 The project is structured into several modules:
