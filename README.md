@@ -44,6 +44,11 @@ After setting up the project, you can run the application to get music recommend
 3. Once the algorithm finishes, you will be redirected to the "Recommendation Screen". This screen displays a list of recommended songs in a RecycleView. Note: The play button is currently non-functional.
 4. Click the "Go to Playlist" button to be redirected to the Spotify playlist with the recommended songs.
 
+## Links
+
+[Figma file with references and development notes](https://www.figma.com/file/WUuUDZ4TGcA971Mv36NWvU/Spotamix?type=whiteboard&node-id=0-1&t=xsr1IDABLd5M64Vt-0)
+
+
 ## Authors
 
 - **it.illushka** - Algorithm and Integration
